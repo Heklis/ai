@@ -1,3 +1,15 @@
+@relation watermelon
+
+@attribute seze {1,2,3}
+@attribute gendi {1,2,3}
+@attribute qiaosheng {1,2,3}
+@attribute wenli {1,2,3}
+@attribute qibu {1,2,3}
+@attribute chugan {1,2}
+@attribute class {Y,N}
+
+@data
+
 1,1,1,1,1,1,Y
 2,1,2,1,1,1,Y
 2,1,1,1,1,1,Y
