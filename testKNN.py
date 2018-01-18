@@ -2,7 +2,7 @@
 
 import knn
 import preprocess
-import numpy as np
+
 
 DATASET_PATH = 'iris.data'
 
