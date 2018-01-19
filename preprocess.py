@@ -1,5 +1,77 @@
 # -*- coding: UTF-8 -*-
 
+class StandardScaler:
+
+    def __init__(self, dataset):
+        # 特征数
+        self.numFeat = len(dataset[0]) - 1
+        # 样本均值
+        self.mean = [0] * self.numFeat
+        # 样本方差
+        self.std = [0] * self.numFeat
+
+        self.fit(dataset)
+
+    def fit(self, dataset):
+
+        for i in range(self.numFeat):
+            sum = 0
+            for example in dataset:
+                sum += example[i]
+            # 样本均值
+            mean = sum / len(dataset)
+            self.mean[i] = mean
+
+            sum = 0
+            for example in dataset:
+                sum += (example[i] - mean) ** 2
+            # 样本方差
+            self.std[i] = sum / (len(dataset) - 1)
+
+    def scale(self, dataset):
+
+        for i in range(self.numFeat):
+            for example in dataset:
+                example[i] = (example[i] - self.mean[i]) / self.std[i]
+
+        return dataset
+
+
+
+class MinMaxScaler:
+
+    def __init__(self, dataset):
+        # 特征数
+        self.numFeat = len(dataset[0]) - 1
+        # 样本特征最大值
+        self.max = [0] * self.numFeat
+        # 样本特征最小值
+        self.min = [0] * self.numFeat
+
+        self.fit(dataset)
+
+    def fit(self, dataset):
+
+        for i in range(self.numFeat):
+            maxVal = dataset[0][i]
+            minVal = dataset[0][i]
+            for example in dataset:
+                if maxVal < example[i]:
+                    maxVal = example[i]
+                if minVal > example[i]:
+                    minVal = example[i]
+            self.max[i] = maxVal
+            self.min[i] = minVal
+
+    def scale(self, dataset):
+
+        for i in range(self.numFeat):
+            # 规范化
+            for example in dataset:
+                example[i] = (example[i] - self.min[i]) \
+                / (self.max[i] - self.min[i])
+
+        return dataset
 
 def minMaxScale(dataset, nominalFeats=[]):
     """
