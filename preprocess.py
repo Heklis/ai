@@ -2,18 +2,26 @@
 
 class StandardScaler:
 
+    """z-score标准化
+
+    """
+
     def __init__(self, dataset):
         # 特征数
         self.numFeat = len(dataset[0]) - 1
         # 样本均值
         self.mean = [0] * self.numFeat
-        # 样本方差
+        # 样本标准差
         self.std = [0] * self.numFeat
 
         self.fit(dataset)
 
     def fit(self, dataset):
+        """匹配数据集，保存其均值和标准差
 
+        Args:
+            dataset (array): 数据集
+        """
         for i in range(self.numFeat):
             sum = 0
             for example in dataset:
@@ -25,11 +33,18 @@ class StandardScaler:
             sum = 0
             for example in dataset:
                 sum += (example[i] - mean) ** 2
-            # 样本方差
-            self.std[i] = sum / (len(dataset) - 1)
+            # 样本标准差
+            self.std[i] = (sum / (len(dataset) - 1)) ** 0.5
 
     def scale(self, dataset):
+        """使用存储的均值和标准差对数据集标准化
 
+        Args:
+            dataset (array): 数据集
+
+        Returns:
+            array: 标准化的数据集
+        """
         for i in range(self.numFeat):
             for example in dataset:
                 example[i] = (example[i] - self.mean[i]) / self.std[i]
@@ -39,6 +54,10 @@ class StandardScaler:
 
 
 class MinMaxScaler:
+
+    """利用最值标准化
+
+    """
 
     def __init__(self, dataset):
         # 特征数
@@ -51,7 +70,11 @@ class MinMaxScaler:
         self.fit(dataset)
 
     def fit(self, dataset):
+        """匹配数据集，保存其特征最值
 
+        Args:
+            dataset (array): 数据集
+        """
         for i in range(self.numFeat):
             maxVal = dataset[0][i]
             minVal = dataset[0][i]
@@ -64,7 +87,14 @@ class MinMaxScaler:
             self.min[i] = minVal
 
     def scale(self, dataset):
+        """使用存储的最值对数据集标准化
 
+        Args:
+            dataset (array): 数据集
+
+        Returns:
+            array: 标准化的数据集
+        """
         for i in range(self.numFeat):
             # 规范化
             for example in dataset:
@@ -72,6 +102,7 @@ class MinMaxScaler:
                 / (self.max[i] - self.min[i])
 
         return dataset
+
 
 def minMaxScale(dataset, nominalFeats=[]):
     """
