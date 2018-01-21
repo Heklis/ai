@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+from random import choice
 
 def split(dataset, isRegress, k=10):
 	"""把数据集划分为k组训练集和验证集
@@ -6,6 +7,7 @@ def split(dataset, isRegress, k=10):
 	Args:
 	    dataset (list): 数据集
 	    k (int, optional): 交叉验证折数
+	    isRegress(boolean): 是否是回归
 
 	Returns:
 	    train_validate_sets:
@@ -13,11 +15,24 @@ def split(dataset, isRegress, k=10):
 	"""
 	if isRegress:
 		subsets = []
-		# 划分出k个子集
-		step = len(dataset) / k
+		# 随机划分出k个子集
+		numSample = len(dataset)
+		indexs = range(numSample)
+		step = numSample / k
 		for i in range(k):
-			subsets.append(dataset[i*step : (i+1)*step])
+			subset = []
+			for j in range(step):
+				index = choice(indexs)
+				indexs.remove(index)
+				subset.append(dataset[index])
+			subsets.append(subset)
 		return generate_train_validate_sets(subsets, k)
+
+
+		# step = len(dataset) / k
+		# for i in range(k):
+		# 	subsets.append(dataset[i*step : (i+1)*step])
+		# return generate_train_validate_sets(subsets, k)
 
 
 	classsets = {}
