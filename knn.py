@@ -2,13 +2,12 @@
 import cross_validation
 
 
-def train(dataset, isRegress, nominalFeats=[]):
+def train(dataset, isRegress):
     """根据交叉验证选取最优的k
     k范围：1-20
 
     Args:
         dataset (list): 数据集
-        nominalFeats(list): 分类型特征索引
         isRegress(boolean): 是否是回归任务
 
     Returns:
@@ -19,7 +18,8 @@ def train(dataset, isRegress, nominalFeats=[]):
     for k in range(2, 20):
         # 10折交叉验证
         # 把数据集划分为10组训练集和验证集
-        train_validate_sets = cross_validation.split(dataset, isRegress)
+        train_validate_sets = \
+        cross_validation.split(dataset, isRegress)
         # print train_validate_sets[0][1]
         # 用KNN分类，然后计算分类精度
         accuracys = 0.0
@@ -27,12 +27,15 @@ def train(dataset, isRegress, nominalFeats=[]):
             trainset = pair[0]
             validateset = pair[1]
             # 获取预测分类列表
-            classList = classify(trainset, validateset, k, nominalFeats, isRegress)
+            classList = classify(
+                trainset, validateset, k, isRegress)
             # 对分类结果进行评估
-            accuracy = cross_validation.evaluate(classList, validateset, isRegress)
+            accuracy = cross_validation.evaluate(
+                classList, validateset, isRegress)
             accuracys += accuracy
         averageAccuracy = accuracys / 10
         ratios.append(averageAccuracy)
+    # 如果是回归，取最小误差
     if isRegress:
         maxAccuracy = min(ratios)
     else:
@@ -42,14 +45,13 @@ def train(dataset, isRegress, nominalFeats=[]):
     return bestK, maxAccuracy
 
 
-def classify(trainset, testset, k, nominalFeats=[], isRegress=False):
+def classify(trainset, testset, k, isRegress=False):
     """采用k,使用trainset，对testset预测类别
 
     Args:
         trainset (list): 训练集
         testset (list): 测试集
         k (int): 最邻近参数
-        nominalFeats(list): 分类型特征索引
         isRegress(boolean): 是否是回归任务
 
     Returns:
@@ -69,13 +71,13 @@ def classify(trainset, testset, k, nominalFeats=[], isRegress=False):
             dists.append((dist, label))
         # 对欧氏距离排序
         dists = sorted(dists, key=lambda d: d[0])
-        # 如果是回归任务
+        # 如果是回归任务,计算前k个样例的加权平均标记
         if isRegress:
+            # 标记和
             sumLabel = 0.0
             for i in range(k):
                 sumLabel += float(dists[i][1])
             cla = sumLabel / k
-            #print cla
             classList.append(cla)
             continue
 
@@ -100,13 +102,14 @@ def calDist(sample, example, numFeat):
         sample (list): 样本
         example (list): 样例
         numFeat (int): 特征数
-        nominalFeats (list): 分类型特征索引
 
     Returns:
         float: 欧氏距离
     """
     dist = 0.0
     for i in range(numFeat):
+        dist += (float(sample[i]) - float(example[i]))**2
+    return dist
         # # 如果特征为分类型
         # if i in nominalFeats:
         #     # 缺失值处理
@@ -127,6 +130,3 @@ def calDist(sample, example, numFeat):
         # if example[i] == '?':
         #     dist += max(abs(1-sample[i]), abs(0-sample[i]))
         #     continue
-
-        dist += (float(sample[i]) - float(example[i]))**2
-    return dist
