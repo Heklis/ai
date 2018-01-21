@@ -1,1 +1,3 @@
-print max(1, 2)
+from random import randint
+
+print float('0.08')

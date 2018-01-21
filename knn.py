@@ -29,11 +29,14 @@ def train(dataset, isRegress, nominalFeats=[]):
             # 获取预测分类列表
             classList = classify(trainset, validateset, k, nominalFeats, isRegress)
             # 对分类结果进行评估
-            accuracy = cross_validation.evaluate(classList, validateset)
+            accuracy = cross_validation.evaluate(classList, validateset, isRegress)
             accuracys += accuracy
         averageAccuracy = accuracys / 10
         ratios.append(averageAccuracy)
-    maxAccuracy = max(ratios)
+    if isRegress:
+        maxAccuracy = min(ratios)
+    else:
+        maxAccuracy = max(ratios)
     # 得到最优k
     bestK = ratios.index(maxAccuracy) + 1
     return bestK, maxAccuracy
@@ -61,7 +64,7 @@ def classify(trainset, testset, k, nominalFeats=[], isRegress=False):
         for example in trainset:
             label = example[-1]
             # 计算欧氏距离
-            dist = calDist(sample, example, numFeat, nominalFeats)
+            dist = calDist(sample, example, numFeat)
 
             dists.append((dist, label))
         # 对欧氏距离排序
@@ -72,7 +75,7 @@ def classify(trainset, testset, k, nominalFeats=[], isRegress=False):
             for i in range(k):
                 sumLabel += float(dists[i][1])
             cla = sumLabel / k
-            print cla
+            #print cla
             classList.append(cla)
             continue
 
@@ -90,7 +93,7 @@ def classify(trainset, testset, k, nominalFeats=[], isRegress=False):
     return classList
 
 
-def calDist(sample, example, numFeat, nominalFeats):
+def calDist(sample, example, numFeat):
     """计算欧氏距离
 
     Args:
@@ -104,26 +107,26 @@ def calDist(sample, example, numFeat, nominalFeats):
     """
     dist = 0.0
     for i in range(numFeat):
-        # 如果特征为分类型
-        if i in nominalFeats:
-            # 缺失值处理
-            # if sample[i] == '?' or example[i] == '?':
-            #     dist += 1
-            #     continue
-            if sample[i] != example[i]:
-                dist += 1
-            continue
+        # # 如果特征为分类型
+        # if i in nominalFeats:
+        #     # 缺失值处理
+        #     # if sample[i] == '?' or example[i] == '?':
+        #     #     dist += 1
+        #     #     continue
+        #     if sample[i] != example[i]:
+        #         dist += 1
+        #     continue
 
         # 缺失值处理
-        if sample[i] == '?' and example[i] == '?':
-            dist += 1
-            continue
-        if sample[i] == '?':
-            dist += max(abs(1-example[i]), abs(0-example[i]))
-            continue
-        if example[i] == '?':
-            dist += max(abs(1-sample[i]), abs(0-sample[i]))
-            continue
+        # if sample[i] == '?' and example[i] == '?':
+        #     dist += 1
+        #     continue
+        # if sample[i] == '?':
+        #     dist += max(abs(1-example[i]), abs(0-example[i]))
+        #     continue
+        # if example[i] == '?':
+        #     dist += max(abs(1-sample[i]), abs(0-sample[i]))
+        #     continue
 
         dist += (float(sample[i]) - float(example[i]))**2
     return dist
