@@ -15,12 +15,11 @@ def train(dataset, isRegress):
         maxAccuracy(float):最大精度
     """
     ratios = []
-    for k in range(2, 20):
+    for k in range(1, 20):
         # 10折交叉验证
         # 把数据集划分为10组训练集和验证集
         train_validate_sets = \
         cross_validation.split(dataset, isRegress)
-        # print train_validate_sets[0][1]
         # 用KNN分类，然后计算分类精度
         accuracys = 0.0
         for pair in train_validate_sets:

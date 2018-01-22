@@ -28,13 +28,6 @@ def split(dataset, isRegress, k=10):
 			subsets.append(subset)
 		return generate_train_validate_sets(subsets, k)
 
-
-		# step = len(dataset) / k
-		# for i in range(k):
-		# 	subsets.append(dataset[i*step : (i+1)*step])
-		# return generate_train_validate_sets(subsets, k)
-
-
 	classsets = {}
 	# 把数据集按照类别划分
 	for sample in dataset:
@@ -52,8 +45,6 @@ def split(dataset, isRegress, k=10):
 		step = len(classset) / k
 		for i in range(k):
 			subsets[i].extend(classset[i*step : (i+1)*step])
-		# subsets[k-1].extend(classset[k*step:])
-
 
 	return generate_train_validate_sets(subsets, k)
 
@@ -72,10 +63,8 @@ def generate_train_validate_sets(subsets, k):
 
 def merge(subsets):
 	"""将多个子集合并
-
 	Args:
 	    subsets (list): 想要合并的子集集合
-
 	Returns:
 	    list: 子集合并后的集合
 	"""

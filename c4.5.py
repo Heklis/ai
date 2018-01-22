@@ -33,10 +33,6 @@ def gainRatio(dataSet, feature_index):
         if value not in sets.keys():
             sets[value] = []
         sets[value].append(sample)
-    # for s in sets:
-    #     print s
-    #     print sets[s]
-    #     print '------------'
     # 信息增益
     gain = ent(dataSet)
     # 固有值
